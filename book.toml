@@ -1,0 +1,6 @@
+[book]
+authors = ["异月"]
+language = "zh"
+multilingual = false
+src = "src"
+title = "异月书"
