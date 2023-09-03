@@ -1,3 +1,9 @@
-# Summary
+# 废话
 
 - [*前言](./intro.md)
+
+# Rust基础
+
+- [Rust基础](./rust_basics/intro.md)
+
+    - [计算机基础](./rust_basics/computer.md)
