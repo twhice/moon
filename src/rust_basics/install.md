@@ -21,11 +21,23 @@
 本教程教的是[Rust](https://www.rust-lang.org/zh-CN/)：一门赋予每个人
 构建可靠且高效软件能力的语言
 
+~~以下部分看不懂就跳过~~
+
 Rust是一门*开源*的语言，意味着这个语言实际上是无数人和组织共同创造和维护的，如果你将来学有所成，你也可以参与开发Rust，为它做出贡献
 
 Rust是一门跨平台语言，意味着如果你使用它编写代码，你的程序可以在很多平台和硬件上运行，包括手机，平板，电脑，嵌入式设备......
 
 Rust是一门新的编程语言，Rust1.0与2015发布，Rust是一门相当年轻的语言，也得益于*开源*，使用它可以接触到很多先进特性
+
+不同于C/C++，Rust*目前*使用的是统一的编译器，统一的强大的cargo，没有奇奇怪怪的*编译器特性*，基本不用为了各种依赖奔波
+
+Rust语法比较严格，很多东西不被允许，但是这不是坏处：不被允许是有原因的
+
+Rust不是一门*面向对象*，的语言，但是它具有很多面向对象的特性，也具有很多其他编程范式的特征
+
+Rust和C/C++一样是一门编译型语言，代码需要编译才可以运行，运行速度极快
+
+Rust和C/C++一样是一门底层语言，可以被用来写底层软件，比如操作系统
 
 # 安装
 
@@ -45,7 +57,7 @@ Rust是一门新的编程语言，Rust1.0与2015发布，Rust是一门相当年�
 | [安卓手机/平板](#termux) | 真不建议使用这个学编程，很不方便（但是也不是不行）|
 | 苹果手机/平板 | 更不建议使用这个学编程，超级不方便，虽然M系列性能很强 |
 
-安装完成后之后你需要看[*编辑器*](#编辑器)，和[*优化*](#优化)
+安装完成后之后你需要看[*编辑器*](#编辑器)来配置编写代码的工具，也可以看[*优化*](#优化)
 
 *感谢字节跳动的[rsproxy.cn](https://rsproxy.cn)*，它使得在国内开发rust很方便
 
@@ -168,16 +180,16 @@ termux的安装和注意事项和linux相同，你直接看[上一部分](#linux
 | Windows，或者Drawin | 进入[官网](https://code.visualstudio.com/)，点击`Download for Windows`(反正就是那个蓝色按钮)，然后安装即可
 | Debian或者Redhat系的linux | 同上在官网直接下载，这个系列的linux可以直接安装到微软的版本| 
 | Archlinux | 虽然这个和其他linux一样只有code-oss(code-oss也完全够用)可以选择，但是archlinux可以从aur下载到[visual-studio-code-bin](https://aur.archlinux.org/packages/visual-studio-code-bin) 
-| 其他linux | 看看包管理器能不能下载到code~~不然你可试试从源码构建~~ |
+| 其他linux | 看看包管理器能不能下载到code ~~不然你可试试从源码构建~~ |
 | 安卓设备 | 可以试试使用[code-server](https://github.com/coder/code-server)(需要有外接键盘，不然体验极差)，或者vim/nvim
 
 ##  插件
 
-默认的Visual Stuido Code功能十分贫乏，需要做一些配置~~调教~~。Visual Stuido Code(接下来就简称vsc了)的一大特色就是：插件。通过安装插件，可以赋予vsc许多原来没有的功能
+默认的Visual Stuido Code功能十分贫乏，需要做一些配置 ~~调教~~ 。Visual Stuido Code(接下来就简称vsc了)的一大特色就是：插件。通过安装插件，可以赋予vsc许多原来没有的功能
 
-只需要在vscode的侧栏选择`插件`就可以搜索&安装插件了
+在vscode的侧栏选择`插件`(或者`Ctrl + Shift + X`)就可以搜索&安装插件了。你可以点进我下面提供的链接进行跳转下载
 
-为了舒服地使用vsc开发rust，需要安装这些插件：
+为了舒服地使用vsc开发rust，需要安装下面的部分插件。可选插件不是必须的，但是可以切实提升使用体验
 
 ### （可选）[Chinese (Simplified) (简体中文) Language Pack for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=MS-CEINTL.vscode-language-pack-zh-hans)
 
@@ -277,7 +289,7 @@ rust编译器完成了源码到程序的绝大多数工作：除了链接
 
 它比各平台默认的链接器要快，而且快**很多**
 
-*而且有些~~msvc~~平台默认的链接器无法编译某些~~bevy~~大型rust程序*
+*而且有些 ~~msvc~~ 平台默认的链接器无法编译某些 ~~bevy~~ 大型rust程序*
 
 它有一个rust包装叫`rust-lld`，可以很方便地使用
 

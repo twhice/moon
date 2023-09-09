@@ -9,3 +9,4 @@
     - [安装Rust](./rust_basics/install.md)
 
 - [Rust进阶](./rust_extra/intro.md)
+   - [异步](./rust_extra/async.md)
