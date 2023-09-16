@@ -250,3 +250,168 @@ impl SelfRef {
 为了应付自引用，就有了Pin，它的特点是无法被移动，试图移动一个Pin会触发编译错误，使得意外的移动不会发生
 
 # 异步编程
+
+好了，是时候开始真正关心的问题了：*进行异步编程*
+
+*概念是为实践服务，不是么*
+
+## 配置依赖
+
+rust std没有一个异步运行时，只提供基本的`Feature`之类的，想要写代码这也是远远不够的
+
+所以将tokio添加到依赖里
+
+feature我这里是`full`，简单省事，如果你了解各个feature是什么，可以自行配置
+
+~~我也没了解tokio的各个feature~~
+
+```toml
+# Carog.toml
+[dependencies]
+tokio = { version = "1.32.0", features = ["full"] }
+```
+
+## 多线程
+
+你得意识到两个问题：
+
+1. 异步是多线程还是单线程，得看运行时的实现。`#[tokio::main]`默认是多线程的异步运行时
+
+2. 要多线程执行异步任务，你仍然得像普通多线程一样spawn一个”线程“出来
+
+## 例子
+
+写一个读取文件夹下全部文件内容的异步函数
+
+```rust
+# use std::path::Path;
+
+# #[tokio::main]
+# async fn main() -> std::io::Result<()> {
+#     dbg!(read_all_file(".").await?);
+#     Ok(())
+# }
+# 
+async fn read_all_file<P: AsRef<Path>>(p: P) -> std::io::Result<Vec<String>> {
+    use tokio::fs;
+
+    let mut dir = fs::read_dir(p).await?;
+
+    let mut result = vec![];
+
+    while let Some(entry) = dir.next_entry().await? {
+        if entry.file_type().await.is_ok_and(|t| t.is_file()) {
+            result.push(fs::read_to_string(entry.path()).await?)
+        }
+    }
+
+    Ok(result)
+}
+```
+
+这个函数可圈可点的地方在哪呢？
+
+* 文件(IO)操作用的都是`tokio::fs`而非`std::fs` **否则不会有任何性能提升**
+
+看起来ok对吧，但是实际上这**完全是单线程的**，和同步的版本性能差别不大
+
+为什么？毕竟你就是按照类似同步的方法写的啊，为什么觉得会自动获得多线程啊？
+
+它的多线程版本大概是这样的
+
+```rust
+# use std::path::Path;
+
+# #[tokio::main]
+# async fn main() -> std::io::Result<()> {
+#     dbg!(read_all_file(".").await?);
+#     Ok(())
+# }
+# 
+async fn read_all_file<P: AsRef<Path>>(p: P) -> std::io::Result<Vec<String>> {
+    use tokio::fs;
+
+    let mut dir = fs::read_dir(p).await?;
+
+    let mut result = vec![];
+    let mut handles = vec![];
+
+    while let Some(entry) = dir.next_entry().await? {
+        handles.push(tokio::spawn(async move {
+            if entry.file_type().await.is_ok_and(|t| t.is_file()) {
+                Some(fs::read_to_string(entry.path()).await)
+            } else {
+                None
+            }
+        }));
+    }
+
+    for handle in handles {
+        let Ok(Some(r)) = handle.await else {
+            continue;
+        };
+        result.push(r?);
+        
+    }
+
+    Ok(result)
+}
+```
+就像是普通的多线程一样，创建一个集合存储`JoinHandle`，创建一堆线程然后一个个join
+
+不过对于`std::thread::spawn`，这样创建一堆线程的行为十分不可取，因为线程创建销毁的成本巨大，这里的创建/销毁又是很频繁的，线程池可能是更好的选择。
+
+但是对于此：`tokio::spawn`来说，开销特别小。你可以这样理解：`tokio::spawn`仅仅为任务做准备，然后委托给运行时运行，而`std::thread::spawn`会为了一个准备运行这个任务所需要的运行时
+
+**但是，如果你的IO操作使用的不是异步的，就不会有一个很好的性能，因为那样tokio没有进行任务切换的机会**
+
+也有一些细节需要注意：
+
+* 使用了`Option::None`表示不是文件这种情况
+
+* `handle.await`  的 `Result<T,E>` 的 E，指的是异步任务发生panic之类的
+
+* 对文件读取操作的错误，传递出去了
+
+不过，就像用map这样的方法替代特定的if let之类的一样，这其实有个更好的版本
+``` rust
+# use std::path::Path;
+
+# #[tokio::main]
+# async fn main() -> std::io::Result<()> {
+#     dbg!(read_all_file(".").await?);
+#     Ok(())
+# }
+# 
+async fn read_all_file<P: AsRef<Path>>(p: P) -> std::io::Result<Vec<String>> {
+    use tokio::fs;
+
+    let mut dir = fs::read_dir(p).await?;
+
+    let mut result = vec![];
+
+    let mut set = tokio::task::JoinSet::new();
+
+    while let Some(entry) = dir.next_entry().await? {
+        set.spawn(async move {
+            if entry.file_type().await.is_ok_and(|t| t.is_file()) {
+                Some(fs::read_to_string(entry.path()).await)
+            } else {
+                None
+            }
+        });
+    }
+
+    while let Some(r) = set.join_next().await {
+        let Ok(Some(r)) = r else {
+            continue;
+        };
+        result.push(r?)
+    }
+
+    Ok(result)
+}
+```
+这里使用`JoinSet`替代了集合，更加直观方便
+
+ 
