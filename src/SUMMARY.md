@@ -7,6 +7,7 @@
 - [Rust基础](./rust_basics/intro.md)
     - [计算机基础](./rust_basics/computer.md)
     - [安装Rust](./rust_basics/install.md)
+    - [编程概念和基本语法](./rust_basics/basic_programming.md)
 
 - [Rust进阶](./rust_extra/intro.md)
    - [异步](./rust_extra/async.md)
