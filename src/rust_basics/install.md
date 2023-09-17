@@ -16,7 +16,7 @@
 
 *我的教程可能并能很优秀地展示出Rust的内涵，如果有不懂的地方欢迎指出，也欢迎加入QQ群(1064891174)讨论*
 
-*罗卜白菜各有所爱，你不喜欢有的是人喜欢。要文明和谐*
+*罗卜白菜各有所爱，你不喜欢有的是人喜欢。 ~~要文明和谐~~*
 
 本教程教的是[Rust](https://www.rust-lang.org/zh-CN/)：一门赋予每个人
 构建可靠且高效软件能力的语言
@@ -59,6 +59,8 @@ Rust和C/C++一样是一门底层语言，可以被用来写底层软件，比�
 
 安装完成后之后你需要看[*编辑器*](#编辑器)来配置编写代码的工具，也可以看[*优化*](#优化)
 
+*[交叉编译](#交叉编译)章节重定向到这里，看不懂请跳过*
+
 *感谢字节跳动的[rsproxy.cn](https://rsproxy.cn)*，它使得在国内开发rust很方便
 
 ## Windows
@@ -81,7 +83,7 @@ Windwos下有两个工具链：msvc和gnu
 
 2. 运行程序，稍等片刻VS的下载器就会安装好
 
-3. 在安装器勾选*使用C++的桌面开发*![](./vs_install.png)然后安装
+3. 在安装器勾选*使用C++的桌面开发*![](./install/vs_install.png)然后安装
 
 
 ### 2. rustup
@@ -99,12 +101,12 @@ $env:RUSTUP_DIST_SERVER="https://rsproxy.cn"
 $env:RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
 ```
 
-3. 将你刚刚下载的*rustup-init.exe*拖拽进*powershell*，回车，你应该看见这样的输出![](./rustup_startup.png)
+3. 将你刚刚下载的*rustup-init.exe*拖拽进*powershell*，回车，你应该看见这样的输出![](./install/rustup_startup.png)
 
 
-4. 如果你要安装msvc工具链，输入1，然后回车，耐心等待下载，你会看到大概这样的输出，然后你可以关闭终端了![](./rustup_msvc_success.png)
+4. 如果你要安装msvc工具链，输入1，然后回车，耐心等待下载，你会看到大概这样的输出，然后你可以关闭终端了![](./install/rustup_msvc_success.png)
 
-4. 如果你要安装gnu工具链，输入2，然后回车，输入gnu，然后回车四次![](./rustup_startup_gnu.png)然后输入1，回车，等待下载，你会看到和上一条类似的输出
+4. 如果你要安装gnu工具链，输入2，然后回车，输入gnu，然后回车四次![](./install/rustup_startup_gnu.png)然后输入1，回车，等待下载，你会看到和上一条类似的输出
 
 ## Linux
 
@@ -140,7 +142,11 @@ curl --proto '=https' --tlsv1.2 -sSf https://rsproxy.cn/rustup-init.sh | sh
 
 输入1，回车，等待下载即可
 
-*如果你使用的shell是fish，你需要手动在配置文件里把`~/.cargo/bin`加进path，rustup不会自动设置fish的环境变量*
+*如果你使用的shell是fish，你需要手动在配置文件(应该是`~/.config/fish/config.fish`)里把`~/.cargo/bin`加进path，rustup不会自动设置fish的环境变量*
+
+```fish
+set -x PATH ~/.cargo/bin $PATH
+```
 
 
 ## Termux
@@ -149,6 +155,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://rsproxy.cn/rustup-init.sh | sh
 
 termux的安装和注意事项和linux相同，你直接看[上一部分](#linux)就可以了
 
+不过termux代表的arm平台是[tier2](https://doc.rust-lang.org/nightly/rustc/platform-support.html)级别的支持，在某些库可能会有一些问题(但是保证标准库的使用)
 # 编辑器
 
 这一步的前提是，你已经安装好了rust工具链，详细见[安装](#安装)
@@ -165,7 +172,7 @@ termux的安装和注意事项和linux相同，你直接看[上一部分](#linux
 
 目前很适合用来编写rust的编辑器有以下几个：
 
-* JetBrains的 [Pycharm](https://www.jetbrains.com/pycharm/download/?section=windows)和[IDEA](https://www.jetbrains.com/zh-cn/idea/)
+* JetBrains的 [Pycharm](https://www.jetbrains.com/pycharm/download/?section=windows)和[IDEA](https://www.jetbrains.com/zh-cn/idea/)，现在甚至有专门的RustRover供给使用(虽然目前还是半成品)
 
 * Microsoft(微软)的[Visual Studio Code](https://code.visualstudio.com/)和它的*开源*版本[Code-OSS](https://github.com/microsoft/vscode)
 
@@ -323,7 +330,7 @@ linker = "rust-lld"
 
 ***没有windows/mac版本，windows或者mac使用lld吧***
 
-它的安装需要使用包管理器，并且依赖于clang
+它的安装需要使用包管理器，并且依赖于clang传递参数才可以使用
 
 *如果你直接使用lld而不是rust-lld，也需要一个clang或者别的编译器作为传递*
 
@@ -339,3 +346,102 @@ rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/mold"]
 ```
 
 `/usr/bin/mold`应换成mold实际路径，不过默认都是在这个路径
+
+## Windows下的奇怪问题
+
+windows下的rust工具链的运行可能会极为缓慢，甚至无法运行，打开项目时就是卡很长时间。是因为windows会检查`rustc.exe` ` cargo.exe`等可执行文件的内容和签名，以及询问是否运行软件(但是用户时看不见询问的，除非是双击运行exe)后才开始运行
+
+解决方案：
+
+* `Windwos安全中心>应用和浏览器控制>智能应用控制设置`调整为`关闭`
+
+# 交叉编译
+
+交叉编译，指的是从一个平台编译到另一个平台
+
+首先了解一下交叉编译需要什么：
+
+1. 可以编译出目标平台代码的编译器
+2. 程序在目标平台运行需要的库
+3. 适用于目标平台的链接器
+
+得益于llvm，rustc是一个跨平台的链接器，问题1不存在
+
+而2，3，就是需要解决的了
+
+*下文假定你知道目标平台的三元组*
+
+如果你想让一个项目默认不是编译到主机平台(也就是默认就是交叉编译)你可以在项目的`.cargo/config.toml`添加以下
+```toml
+[build]
+target = "xxx"
+```
+
+`config.toml`的介绍[见此](#优化)，要注意的是只可以在项目的`config.toml`配置编译目标，用户目录的配置会被忽略(好像是这样的？)
+
+## Windows到其他平台
+
+何苦**折磨自己**！请使用[wsl](https://learn.microsoft.com/zh-cn/windows/wsl/install)然后参见下文
+
+## Linux到其他平台
+
+Linux是最适合开发的OS，它的交叉编译是最方便的，没有之一
+
+如果要进行跨平台编译，你需要使用可以链接目标平台程序的链接器
+
+但是可以直接使用一个跨平台的链接器一劳永逸，比如[lld](#lld)(点击以跳转到lld章节)
+
+*如果是到其他*unix，或许mold也行，但是可能会有兼容性问题，lld是最稳妥的*
+
+然后就是得到要会被连接的，目标平台的库文件
+
+### 到Windows 
+
+如果目标平台是gnu abi，你可通过安装`mingw`得到windwos下的库文件
+
+如果目标平台是msvc abi，你可以通过安装`xwin`得到Windows SDK
+```bash
+cargo install xwin
+```
+
+然后将库文件下载到一个文件夹，比如`/opt/xwin`
+```bash
+xwin splat --output /opt/xwin
+```
+安装时会询问是否同意微软的EULA，yes就是了 
+
+然后更改`config.toml`，最后看起来大概是这样的，路径按照实际情况更改
+```toml
+[target.x86_64-pc-windows-msvc]
+linker = "lld"
+rustflags = [
+  "-Lnative=/opt/xwin/crt/lib/x86_64",
+  "-Lnative=/opt/xwin/sdk/lib/um/x86_64",
+  "-Lnative=/opt/xwin/sdk/lib/ucrt/x86_64"
+]
+```
+
+### 编译到Windows的疑难杂症
+
+如果是目标平台是msvc abi，库文件的路径必须得是对的，不然会提示找不到库
+
+有的程序 ~~动态链接的bevy~~ 如果启用了 `share-generics`这一不稳定特性，会有严重的*符号膨胀*问题，使得无法链接，可以尝试指定在rustflags加上`"-Zshare-generics=y"`，以及使用[`lld`](#lld)替代默认链接器
+
+如果你交叉编译的是动态链接的windows程序，恐怕很难通过cargo run直接在wsl运行或者通过wine运行，这个问题我目前还没尝试解决
+
+
+### 到别的架构的Linux
+
+使用Docker安装目标架构的容器，然后在容器安装编译工具链进行编译是最方便的，也是最省心的
+
+### 到自定义平台
+
+使用lld，就没别的需要注意
+
+### 到Android
+
+没有试过
+
+### 到Mac/IOS
+
+没有资料
