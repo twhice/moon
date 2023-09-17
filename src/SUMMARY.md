@@ -10,4 +10,8 @@
     - [编程概念和基本语法](./rust_basics/basic_programming.md)
 
 - [Rust进阶](./rust_extra/intro.md)
-   - [异步](./rust_extra/async.md)
+    - [异步](./rust_extra/async.md)
+
+- [小项目](./projects/intro.md)
+    - [三角形](./projects/triangle/intro.md)
+        - [准备工作](./projects/triangle/preparations.md)

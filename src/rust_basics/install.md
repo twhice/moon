@@ -10,13 +10,10 @@
 
 解决问题的方法有很多，所以有很多编程语言，它们的设计理念有所差异，它们各有各的特色和优缺点
 
-*比较一门语言的好坏要结合多方面的实际，而不是片面地使用自己的主观感受来评价*
-
-*你觉得一语言好不好，可能是你不喜欢语言的设计理念，或者对语言某方面的内涵感到困惑*
-
-*我的教程可能并能很优秀地展示出Rust的内涵，如果有不懂的地方欢迎指出，也欢迎加入QQ群(1064891174)讨论*
-
-*罗卜白菜各有所爱，你不喜欢有的是人喜欢。 ~~要文明和谐~~*
+> * 比较一门语言的好坏要结合多方面的实际，而不是片面地使用自己的主观感受来评价
+> * 你觉得一语言好不好，可能是你不喜欢语言的设计理念，或者对语言某方面的内涵感到困惑
+>* 我的教程可能并能很优秀地展示出Rust的内涵，如果有不懂的地方欢迎指出，也欢迎加入QQ群(1064891174)讨论
+>* 罗卜白菜各有所爱，你不喜欢有的是人喜欢。 ~~要文明和谐~~ 
 
 本教程教的是[Rust](https://www.rust-lang.org/zh-CN/)：一门赋予每个人
 构建可靠且高效软件能力的语言
@@ -75,9 +72,8 @@ Windwos下有两个工具链：msvc和gnu
 
 ### 1. msvc生成工具
 
-*如果你以前有安装VS的C++工具链，可以直接跳过这一步*
-
-*如果你不选择安装msvc工具链，你可以跳过这一步*
+> 如果你以前有安装VS的C++工具链，可以直接跳过这一步<br>
+> 如果你不选择安装msvc工具链，你可以跳过这一步
 
 1. 安装[*宇宙第一ide*](https://visualstudio.microsoft.com/zh-hans/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030&passive=false)（点击链接就可以下载）
 
@@ -88,8 +84,7 @@ Windwos下有两个工具链：msvc和gnu
 
 ### 2. rustup
 
-
-*你不可以跳过这一步*
+> 你不可以跳过这一步
 
 ~~*忽略我的壁纸*~~
 
@@ -110,7 +105,7 @@ $env:RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
 
 ## Linux
 
-*既然用上linux，就假定你对linux有基本的了解*
+> 既然用上linux，就假定你对linux有基本的了解
 
 这里有两个方案：
 
@@ -151,7 +146,7 @@ set -x PATH ~/.cargo/bin $PATH
 
 ## Termux
 
-*既然用上termux，就假定你对linux有基本的了解*
+> 既然用上termux，就假定你对linux有基本的了解
 
 termux的安装和注意事项和linux相同，你直接看[上一部分](#linux)就可以了
 
@@ -170,13 +165,10 @@ termux的安装和注意事项和linux相同，你直接看[上一部分](#linux
 
 ## Visual Studio Code
 
-目前很适合用来编写rust的编辑器有以下几个：
-
-* JetBrains的 [Pycharm](https://www.jetbrains.com/pycharm/download/?section=windows)和[IDEA](https://www.jetbrains.com/zh-cn/idea/)，现在甚至有专门的RustRover供给使用(虽然目前还是半成品)
-
-* Microsoft(微软)的[Visual Studio Code](https://code.visualstudio.com/)和它的*开源*版本[Code-OSS](https://github.com/microsoft/vscode)
-
-* 任何编辑器，只要你会用
+> 推荐用来进行rust开发的编辑器：
+> * Microsoft(微软)的[Visual Studio Code](https://code.visualstudio.com/)或者它的*开源*版本[Code-OSS](https://github.com/microsoft/vscode)
+> * JetBrains的 [Pycharm](https://www.jetbrains.com/pycharm/download/?section=windows)和[IDEA](https://www.jetbrains.com/zh-cn/idea/)，现在甚至有专门的RustRover供给使用(虽然目前还是半成品)
+> * 任何编辑器，只要你会用
 
 我这里着重介绍Visual Studio Code，因为我也是使用的这个编辑器
 
@@ -188,7 +180,7 @@ termux的安装和注意事项和linux相同，你直接看[上一部分](#linux
 | Debian或者Redhat系的linux | 同上在官网直接下载，这个系列的linux可以直接安装到微软的版本| 
 | Archlinux | 虽然这个和其他linux一样只有code-oss(code-oss也完全够用)可以选择，但是archlinux可以从aur下载到[visual-studio-code-bin](https://aur.archlinux.org/packages/visual-studio-code-bin) 
 | 其他linux | 看看包管理器能不能下载到code ~~不然你可试试从源码构建~~ |
-| 安卓设备 | 可以试试使用[code-server](https://github.com/coder/code-server)(需要有外接键盘，不然体验极差)，或者vim/nvim
+| 安卓设备 | 可以试试使用[code-server](https://github.com/coder/code-server)(需要有外接键盘，不然体验极差)，不然vim/nvim/helix作为编辑器一定是更好的选择
 
 ##  插件
 
@@ -200,12 +192,11 @@ termux的安装和注意事项和linux相同，你直接看[上一部分](#linux
 
 ### （可选）[Chinese (Simplified) (简体中文) Language Pack for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=MS-CEINTL.vscode-language-pack-zh-hans)
 
-汉化界面的插件
+汉化界面的插件，搜索时直接搜索Chinese就可以了
 
-搜索时直接搜索Chinese就可以了，这个插件一般会自动安装
+这个插件一般会自动安装
 
-
-### [rust-analyzer]
+### [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
 
 这是最重要的插件，开发rust全靠这个。它可以给出提示，提供代码补全，重构代码，查找声明和使用，一键编译运行......总之就是极为强大
 
@@ -233,19 +224,19 @@ termux的安装和注意事项和linux相同，你直接看[上一部分](#linux
 
 # 优化
 
-***这里的内容比较复杂且不是必须的，只是提前写出来，如果你看不懂请跳过***
+> ***这里的内容比较复杂且不是必须的，只是提前写出来，如果你看不懂请跳过***
 
 如果用的是rustup，rust默认会被安装在用户文件夹下的`.cargo`和`.rustup`文件夹。在`.cargo`文件夹下创建一个`config.toml`文件然后修改它的内容，可以对cargo进行一些配置
 
 本文接下来的就是介绍这个配置文件
 
-*你也可以在一个项目下创建`.cargo/config.toml`，优先级更高*
+> 你也可以在一个项目下创建`.cargo/config.toml`，优先级更高
 
 ## 换源
 
 crates.io一般是从github获取库/项目，一般在国内有着严重的网络问题。这也是为什么一群人被拦在官方教程第二章的rand上
 
-*解决方案就是使用镜像*
+解决方案就是使用镜像
 
 意思是从rsproxy.cn而不是从crates.io获取crates.io上的内容
 
@@ -263,7 +254,7 @@ index = "https://rsproxy.cn/crates.io-index"
 git-fetch-with-cli = true
 ```
 
-然而，rustup也要换源
+为了更新rust工具链，rustup也要换源（你也可以每次更新rust都设置一次镜像）
 
 * RUSTUP_DIST_SERVER 设置为 https://rsproxy.cn
 * RUSTUP_UPDATE_ROOT 设置为 https://rsproxy.cn/rustup
@@ -292,11 +283,11 @@ rust编译器完成了源码到程序的绝大多数工作：除了链接
 
 ### lld
 
-*llvm linker*
+> llvm linker
 
 它比各平台默认的链接器要快，而且快**很多**
 
-*而且有些 ~~msvc~~ 平台默认的链接器无法编译某些 ~~bevy~~ 大型rust程序*
+> 而且有些 ~~msvc~~ 平台默认的链接器无法编译某些 ~~bevy~~ 大型rust程序
 
 它有一个rust包装叫`rust-lld`，可以很方便地使用
 
@@ -324,11 +315,12 @@ linker = "rust-lld"
 
 ### mold
 
-*A Modern Linker*
+> A Modern Linker*<br>
+> ***没有windows/mac版本，windows或者mac使用lld吧***
+
 
 它是一个多线程的链接器，**比*lld*还要快很多**，超级快，几乎就是复制文件一样的速度
 
-***没有windows/mac版本，windows或者mac使用lld吧***
 
 它的安装需要使用包管理器，并且依赖于clang传递参数才可以使用
 
@@ -359,17 +351,16 @@ windows下的rust工具链的运行可能会极为缓慢，甚至无法运行，
 
 交叉编译，指的是从一个平台编译到另一个平台
 
-首先了解一下交叉编译需要什么：
-
-1. 可以编译出目标平台代码的编译器
-2. 程序在目标平台运行需要的库
-3. 适用于目标平台的链接器
+> 首先了解一下交叉编译需要什么：
+> 1. 可以编译出目标平台代码的编译器
+> 2. 程序在目标平台运行需要的库
+> 3. 适用于目标平台的链接器
 
 得益于llvm，rustc是一个跨平台的链接器，问题1不存在
 
 而2，3，就是需要解决的了
 
-*下文假定你知道目标平台的三元组*
+> 下文假定你知道目标平台的三元组*
 
 如果你想让一个项目默认不是编译到主机平台(也就是默认就是交叉编译)你可以在项目的`.cargo/config.toml`添加以下
 ```toml
@@ -385,13 +376,14 @@ target = "xxx"
 
 ## Linux到其他平台
 
+> 如果是到其他*unix，或许mold也行，但是可能会有兼容性问题，lld是最稳妥的
+
 Linux是最适合开发的OS，它的交叉编译是最方便的，没有之一
 
 如果要进行跨平台编译，你需要使用可以链接目标平台程序的链接器
 
 但是可以直接使用一个跨平台的链接器一劳永逸，比如[lld](#lld)(点击以跳转到lld章节)
 
-*如果是到其他*unix，或许mold也行，但是可能会有兼容性问题，lld是最稳妥的*
 
 然后就是得到要会被连接的，目标平台的库文件
 
@@ -436,7 +428,7 @@ rustflags = [
 
 ### 到自定义平台
 
-使用lld，就没别的需要注意
+使用lld，别的注意事项不清楚
 
 ### 到Android
 
