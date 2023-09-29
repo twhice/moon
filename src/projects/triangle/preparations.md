@@ -131,10 +131,7 @@ X在每个部分都有很多实现
 
 Linux下的GPU驱动算是一个比较复杂的话题，我个人用的比较多的是[ArchLinux](https://archlinux.org)，所以以下经验基本是建立在ArchLinux上的
 
-# GPU
-
-
-## 图形API
+# 图形API
 
 你可能听说过`显卡(又叫Graphics Process Unit,GPU)`的概念，并且知晓显卡是用来渲染图形的，也就是负责绘制画面。
 
@@ -154,7 +151,7 @@ Linux下的GPU驱动算是一个比较复杂的话题，我个人用的比较多
 
 > 这里说到的*跨平台*起码包括Windows，Linux，MacOS，Android，IOS 这些平台
 
-### OpenGL
+## OpenGL
 
 > OpenGraphicsLibrary
 
@@ -168,7 +165,7 @@ Linux下的GPU驱动算是一个比较复杂的话题，我个人用的比较多
 
 不管怎么说，OpenGL还是图形开发的*首选*，对于Rust，它的绑定有底层的[glow](https://crates.io/crates/glow)和高级的[glium](https://crates.io/crates/winapi)。
 
-### Vulkan
+## Vulkan
 
 它是OpenGL的替代者
 
@@ -184,7 +181,7 @@ Vulkan的*计算管线*更使得*通用计算*成为可能，使得GPU可以从*
 
 Vulkan原生支持C++和C，对于Rust有着[ash](https://crates.io/crates/ash)这样的优秀底层绑定，和[vulkano](https://crates.io/crates/vulkano)这样的上层绑定
 
-### DirectX
+## DirectX
 
 > 很抱歉我对这个了解不多，我也没直接用过这个API
 
@@ -198,7 +195,7 @@ Vulkan原生支持C++和C，对于Rust有着[ash](https://crates.io/crates/ash)�
 
 它的Rust绑定就是[winapi](https://crates.io/crates/winapi)的一部分
 
-### WebGPU
+## WebGPU
 
 ***主角登场！***
 
@@ -206,7 +203,9 @@ Vulkan原生支持C++和C，对于Rust有着[ash](https://crates.io/crates/ash)�
 
 WebGPU也是*新一代图形API*，只不过它是面向*Web平台*(浏览器)的，它使得Web开发者也可以高效地享受到主机的CPU资源。毕竟WebGL就是OpenGL分身之一，不能满足人们日益增长的性能需要
 
-WebGPU使得Web上的通用计算和高性能渲染成为可能，它的性能几乎就是使用原生API，因为它运行的原理就是让各个浏览器开发商提供WebGPU调用到实际图形API的转译。WebGPU里的GPU资源什么的，也是实际的GPU的资源，没有半分虚假
+WebGPU使得Web上的通用计算和高性能渲染成为可能，它的性能几乎就是使用原生API，~~使得浏览器挖矿成为可能，借每张路过的GPU一用~~，因为它运行的原理就是让各个浏览器开发商提供WebGPU调用到实际图形API的转译。WebGPU里的GPU资源什么的，也是实际的GPU的资源，没有半分虚假
+
+
 
 那么如果，我是说如果，把API转移这一部分从浏览器分离出来，不就可以用WebGPU这个图形API开发支持多种图形API的程序吗？
 
@@ -218,7 +217,7 @@ WGPU就是干这个的，它使得开发者可以使用WebGPU API开发*跨平�
 
 接下来的教程使用的就是这个API
 
-## 驱动
+# 驱动
 
 > 驱动只是开始而已
 
@@ -237,21 +236,181 @@ sudo pacman -S xf86-video-nouveau
 
 首先，你得知道你是什么内核
 
-对于标准的`linux`内核，直接安装这个就可以，*不推荐通过官网提供的二进制程序安装这个*
+对于标准的`linux`内核，直接安装这个就可以，*archlinux不推荐通过官网提供的二进制程序安装驱动*
 ```bash
 sudo pacman -S nvidia
 ```
-对于长期支持版的`linux-lts`内核，
+对于`linux-lts`(长期支持版)内核，
 ```bash
 sudo pacman -S nvidia-lts
 ```
 
-但是，其他内核就比较麻烦了，只能用*DKMS(Dynamic Kernel Module System)(动态内核模块系统)*解决
-> 每次变更内核，都会自动重新编译一次内核模块
+其他内核就比较麻烦了，只能用*DKMS(Dynamic Kernel Module System)(动态内核模块系统)*解决
+
+> 意味着每次变更内核/驱动，都会自动重新编译一次内核模块
+
 ```bash
 sudo pacman -S nvidia-dkms
 ```
 
-## mesa
+# mesa和wsl的爱恨情仇
 
 mesa相当好，是一个开源的图形驱动，适用于大量GPU
+
+实际上，这一节没必要存在，但是因为我*善于折腾*，接触了很多mesa相关的东西，便愈发觉得这一节的重要性
+
+如果你用的是wsl，并且你希望享受到GPU加速而不是软渲染(***`l l v m p i p e / l a v a p i p e`***)的话，你就可以继续看了，不然你就跳过吧！
+
+> 这里我只涉及`Ubuntu`和`Archlinux`作为wsl
+
+## WSL-OpenGL
+
+如果你是Ubuntu的wsl，你应该可以在安装`mesa`之后直接享受到OpenGL
+```bash
+sudo apt install mesa-utils
+```
+然后可以使用这个指令
+```bash
+glxinfo -B | grep Device
+```
+如果你看到类似`Device: D3D12 (Intel(R) UHD Graphics) (0xffffffff)`这样（D3D12开头）的说明你已经可以享受到opengl加速了
+
+
+但是如果你是Archlinux
+
+> 我使用的是ArchWSL，如果是你自己搞的，可能会缺失很多关键东西，使得这一切完全无法进行
+
+安装
+```bash
+sudo pacman -S mesa-utils
+```
+然后
+```bash
+glxinfo -B | grep Device
+```
+你会看到`Device: llvmpipe (LLVM 16.0.6, 256 bits) (0xffffffff)`：认识一下，llvmpipe也就是软渲染，也就是CPU模拟GPU进行渲染，一般是作为最后选择/服务器渲染，总之很不合适！
+
+没有使唤上真正GPU的原因是什么呢？是因为你缺了一点点东西！运行这个命令
+```bash
+ldd /usr/lib/wsl/drivers/*/*.so | grep "not found"
+```
+你会发现下面类似下面那样的输出
+```
+        libedit.so.2 => not found
+        libigdgmm_w.so.12 => not found
+        libedit.so.2 => not found
+        libedit.so.2 => not found
+```
+
+`not found`意味着某的驱动它所需的某个动态库缺失了，你需要手动补全它缺失的依赖来让它运作，略微有点麻烦
+
+> *libigdgmm_w.so.12 这个不用解决也解决不了*
+
+基本上在pacman都可以找齐，除了`libedit.so.2`。其实解决方法也是很朴实无华，手动链接一下就可以（注意你的可能不是libedit.so.0.0.72，而是别的版本，你直接链接就是了）
+```bash
+sudo ln -s /usr/lib/libedit.so.0.0.72 /usr/lib/libedit.so.2
+```
+
+如果无误，你现在就可以享受到opengl加速了。这是mesa的一部分：D3D12，可以说专为wsl开发，功能就是将OpenGL调用转译为D3D12(这里的意思是[`DirectX3D12`](#directx))
+
+如果你嫌弃默认选择的是核显比较慢，你可以通过`MESA_D3D12_DEFAULT_ADAPTER_NAME`环境变量设置为独显，比如用这个就可以选择nvidia显卡
+```bash
+export MESA_D3D12_DEFAULT_ADAPTER_NAME="nvidia"
+```
+如果你的显卡和U是同一个厂的，你可以这样，它(应该)会选择RX7900
+```bash
+export MESA_D3D12_DEFAULT_ADAPTER_NAME="rx7900"
+```
+
+## WSL-Vulkan
+
+单纯OpenGL其实挺够的，但不一定够，***如果你在WSL下开发Bevy，OpenGl做图形后端很大可能跑不起来！***
+
+首先还是安装vulkan
+
+Ubuntu
+```bash
+sudo apt install vulkan-tools
+```
+
+Archlinux
+```
+sudo pacman -S vulkan-tools
+```
+
+就像使用`glxinfo -B`一样，也有一个命令可以检测Vulkan API`vulkan`。我们使用grep过滤出有用的信息
+
+```bash
+vulkaninfo | grep "GPU id"
+```
+
+如果你是Ubuntu，可能会看到这个输出，显然，这是软渲染
+```
+                GPU id = 0 (llvmpipe (LLVM 15.0.7, 256 bits))
+                GPU id = 0 (llvmpipe (LLVM 15.0.7, 256 bits))
+                GPU id = 0 (llvmpipe (LLVM 15.0.7, 256 bits))
+GPU id : 0 (llvmpipe (LLVM 15.0.7, 256 bits)):
+GPU id : 0 (llvmpipe (LLVM 15.0.7, 256 bits)):
+```
+如果你是Archlinux，你可能会收到类似这样的报错，因为pacman不会在安装mesa时安装vulkan的软渲染
+```
+ERROR: [Loader Message] Code 0 : vkCreateInstance: Found no drivers!
+Cannot create Vulkan instance.
+This problem is often caused by a faulty installation of the Vulkan driver or attempting to use a GPU that does not support Vulkan.
+ERROR at /usr/src/debug/vulkan-tools/Vulkan-Tools-1.3.263/vulkaninfo/vulkaninfo.h:688:vkCreateInstance failed with ERROR_INCOMPATIBLE_DRIVER
+```
+
+就像是D3D12，它提供了OpenGL一样，一样有Dozen，它提供了Vulkan
+
+
+Dozen默认在mesa是禁用的，你得从源代码构建，或者下载它。对于Ubuntu，你可以通过ppa直接拿到已经编译好了，启用了Dozen的现成版本
+
+
+> Dozen的资料太太太少了，mesa官网甚至都没记载它，仅仅在更新日志提名过。如果你没有代理的话这个下载也是很慢
+
+```bash
+sudo add-apt-repository ppa:kisak/kisak-mesa
+sudo apt update
+sudo apt upgrade
+```
+
+所以如果你不想通过这个下载，你或许可以试试我已经下载好的库：**极其不推荐这种行为，兼容性问题难以预料**
+
+> 你可以在本书仓库的`src\projects\triangle\附件`找到`libvulkan_dzn.so`
+
+移动到任何你喜欢的位置，然后创建一个文件，我这里使用在`/usr/share/vulkan/icd.d/`创建`dzn.json`
+
+~~vim怎么用不用教吧~~
+
+```bash
+vim /usr/share/vulkan/icd.d/dzn.json
+```
+
+添入以下内容，`library_path`改为你放库文件的位置
+```json
+{
+    "ICD": {
+        "api_version": "1.1.246",
+        "library_path": "/usr/lib/libvulkan_dzn.so"
+    },
+    "file_format_version": "1.0.0"
+}
+```
+
+然后设置环境变量`VK_ICD_FILENAMES`为刚刚创建的文件的位置，比如`/usr/share/vulkan/icd.d/dzn.json`
+
+此时再`vulkaninfo | grep "GPU id"`，信息就出现了真显卡
+```
+WARNING: dzn is not a conformant Vulkan implementation, testing use only.
+WARNING: dzn is not a conformant Vulkan implementation, testing use only.
+                GPU id = 0 (Microsoft Direct3D12 (NVIDIA GeForce RTX 4060 Laptop GPU))
+                GPU id = 1 (Microsoft Direct3D12 (Intel(R) UHD Graphics))
+                GPU id = 0 (Microsoft Direct3D12 (NVIDIA GeForce RTX 4060 Laptop GPU))
+                GPU id = 1 (Microsoft Direct3D12 (Intel(R) UHD Graphics))
+                GPU id = 0 (Microsoft Direct3D12 (NVIDIA GeForce RTX 4060 Laptop GPU))
+                GPU id = 1 (Microsoft Direct3D12 (Intel(R) UHD Graphics))
+GPU id : 0 (Microsoft Direct3D12 (NVIDIA GeForce RTX 4060 Laptop GPU)):
+GPU id : 1 (Microsoft Direct3D12 (Intel(R) UHD Graphics)):
+GPU id : 0 (Microsoft Direct3D12 (NVIDIA GeForce RTX 4060 Laptop GPU)):
+GPU id : 1 (Microsoft Direct3D12 (Intel(R) UHD Graphics)):
+```
