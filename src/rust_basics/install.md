@@ -315,7 +315,8 @@ linker = "rust-lld"
 
 ### mold
 
-> A Modern Linker*<br>
+> A Modern Linker*
+>
 > ***没有windows/mac版本，windows或者mac使用lld吧***
 
 
